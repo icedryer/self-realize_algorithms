@@ -1,0 +1,130 @@
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include<cstring>
+using namespace std;
+const int MAXN = 1000;
+const int mod = 1e4;
+class bigint
+{
+public:
+    int g[MAXN];
+    bigint(){memset(g,0,sizeof(g));}//未初始化导致乱码
+    bigint(int n){
+        memset(g,0,sizeof(g));//同理
+        int cur=MAXN-1;
+        while(n>0){
+            g[cur--]=n%mod;
+            //cout<<n%mod<<" "<<n/mod<<endl;
+            n=n/mod;
+        }
+    }
+    void operator*=(const int n)
+    {
+        for (int i = MAXN-1; i >= 0; --i)
+        {
+            g[i] *= n;
+        }
+        for (int i = MAXN; i >= 1; --i)
+        {
+            g[i - 1] += (g[i] / mod);// /和*反了
+            g[i] %= mod;
+        }
+    }
+    bool operator<(const bigint &t)
+    {
+        for (int i = 0; i < MAXN; ++i)
+        {
+            if (g[i] != t.g[i])
+                return g[i] < t.g[i];
+        }
+        return false;
+    }
+    void print()
+    {
+        int tag = 0;
+        for (int i = 0; i < MAXN - 1; ++i)
+        {
+            if (g[i] && tag == 0)
+            {
+                tag = 1;
+                printf("%d", g[i]);
+                continue;
+            }
+            if (tag)
+            {
+                if(g[i]>=1000);
+                else if(g[i]>=100)putchar('0');
+                else if(g[i]>=10)printf("00");
+                else printf("000");//0少了
+                printf("%d",g[i]);
+            }
+        }
+        int tp=g[MAXN-1];
+        if(tag==0){
+            printf("%d",tp);
+        }else{
+if(tp>=1000);
+                else if(tp>=100)putchar('0');
+                else if(tp>=10)printf("00");
+                else printf("000");//0 少了
+                printf("%d",tp);
+        }
+    }
+    bigint  operator/(int d){
+        bigint res;
+        res.g[MAXN-1]=g[MAXN-1];
+        for(int i=0;i<MAXN-1;++i){
+            
+            res.g[i]+=g[i];
+            //if(i>=497)cout<<i<<" "<<res.g[i]<<endl;
+            res.g[i+1]+=((res.g[i]%d)*mod);//*和/反了 +1变减一
+             //if(i>=497)cout<<i+1<<" "<<res.g[i+1]<<endl;
+            res.g[i]/=d;
+            //if(i>=497)cout<<i<<" "<<res.g[i]<<endl;
+        }
+        res.g[MAXN-1]/=d;
+        //cout<<res.g[MAXN-1]<<endl;
+        for(int i=MAXN-1;i>=1;--i){
+            res.g[i-1]+=(res.g[i]/mod);
+            res.g[i]%=mod;
+        }
+        //for(int i=497;i<=499;++i)cout<<res.g[i];
+        return res;
+
+    }
+};
+class node
+{
+public:
+    int a, b;
+    bool operator<(const node &p) { return a * b < p.a * p.b; }
+} in[10005];
+int main()
+{
+    int n;
+    cin >> n;
+    for (int i = 0; i <= n; ++i)
+        cin >> in[i].a >> in[i].b;
+    sort(in + 1, in + n + 1);
+    //bigint p=1348102943;
+    //p.print();
+    //p=p/9999;
+    //cout<<endl;
+    //p.print();
+    bigint mul = 1;
+    bigint res = 0;
+    //mul.print();
+    for (int i = 1; i <= n; ++i)
+    {
+        mul*=in[i-1].a;
+        //mul.print();
+        //cout<<endl;
+        bigint temp = mul/in[i].b;
+        //temp.print();
+        //cout<<endl;
+        // cout<<mul<<endl;
+        if(res<temp)res=temp;
+    }
+    res.print();
+}
